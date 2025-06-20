@@ -3,6 +3,8 @@ package com.min.holidaykeeper.controller;
 import com.min.holidaykeeper.dto.request.HolidayRequest;
 import com.min.holidaykeeper.dto.response.HolidayResponse;
 import com.min.holidaykeeper.service.HolidayService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -13,13 +15,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/holidays")
 @RequiredArgsConstructor
 @Tag(name = "Holiday API", description = "공휴일 관리 API")
 public class HolidayController {
     private final HolidayService holidayService;
 
-    @GetMapping("/holidays")
+    @GetMapping
+    @Operation(summary = "2. 검색 - 연도, 국가, from-to기간, 공휴일 타입 필터 기반 공휴일 조회")
     public ResponseEntity<Page<HolidayResponse>> searchCountries(@ParameterObject @ModelAttribute HolidayRequest request, @ParameterObject @PageableDefault(size = 20) Pageable pageable) {
         Page<HolidayResponse> holidays = holidayService.searchHolidays(
                 request.getHolidayYear(),
@@ -31,5 +34,16 @@ public class HolidayController {
         ).map(HolidayResponse::from);
 
         return ResponseEntity.ok(holidays);
+    }
+
+    @PostMapping("/refresh/{countryCode}/{year}")
+    @Operation(summary = "3. 재동기화(Refresh) - 특정 연도, 국가 데이터를 재호출하여 Upsert")
+    public ResponseEntity<Void> refreshHolidays(
+            @Parameter(description = "국가 코드", example = "KR") @PathVariable String countryCode,
+            @Parameter(description = "연도", example = "2025") @PathVariable int year) {
+
+        holidayService.refreshHolidaysByCountryAndYear(countryCode, year);
+
+        return ResponseEntity.ok().build();
     }
 }
