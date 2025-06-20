@@ -18,7 +18,6 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @Transactional
@@ -32,6 +31,7 @@ public class HolidayService {
     private static final int END_YEAR = 2025;
     private static final String[] INITIAL_COUNTRIES = {"KR", "US", "JP", "CN", "DE", "FR", "GB", "CA", "AU", "BR"};
 
+    // 1. 데이터 적재
     @PostConstruct
     public void initializeData() {
         CompletableFuture.runAsync(() -> {
@@ -40,6 +40,7 @@ public class HolidayService {
         });
     }
 
+    // 2. 검색
     @Transactional(readOnly = true)
     public Page<Holiday> searchHolidays(Integer holidayYear, String countryCode,
                                         LocalDate from, LocalDate to,
@@ -47,17 +48,15 @@ public class HolidayService {
         return holidayRepository.searchHolidays(holidayYear, countryCode, from, to, type, pageable);
     }
 
-    private void initializeCountries() {
-        List<CountryDto> countries = nagerApiService.getCountries();
+    // 3. 재동기화(Refresh)
+    public void refreshHolidaysByCountryAndYear(String countryCode, int holidayYear) {
+        holidayRepository.deleteByCountryCodeAndYear(countryCode, holidayYear);
 
-        List<Country> countryList = countries.stream()
-                .map(dto -> Country.builder()
-                        .countryCode(dto.getCountryCode())
-                        .name(dto.getName())
-                        .build())
+        List<HolidayDto> holidays = nagerApiService.getHolidays(countryCode, holidayYear);
+        List<Holiday> holidayList = holidays.stream()
+                .map(dto -> dtoToEntity(dto, holidayYear))
                 .toList();
-
-        countryRepository.saveAll(countryList);
+        holidayRepository.saveAll(holidayList);
     }
 
     private void getHolidaysByHolidayYear() {
