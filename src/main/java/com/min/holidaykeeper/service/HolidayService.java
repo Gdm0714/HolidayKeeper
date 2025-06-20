@@ -28,11 +28,9 @@ public class HolidayService {
     private final HolidayRepository holidayRepository;
     private final NagerApiService nagerApiService;
 
-    private static final int START_YEAR = 2023;
-    private static final int END_YEAR = 2024;
+    private static final int START_YEAR = 2020;
+    private static final int END_YEAR = 2025;
     private static final String[] INITIAL_COUNTRIES = {"KR", "US", "JP", "CN", "DE", "FR", "GB", "CA", "AU", "BR"};
-
-    private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     @PostConstruct
     public void initializeData() {
@@ -43,10 +41,10 @@ public class HolidayService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Holiday> searchHolidays(Integer year, String countryCode,
-                                        LocalDate fromDate, LocalDate toDate,
+    public Page<Holiday> searchHolidays(Integer holidayYear, String countryCode,
+                                        LocalDate from, LocalDate to,
                                         String type, Pageable pageable) {
-        return holidayRepository.searchHolidays(year, countryCode, fromDate, toDate, type, pageable);
+        return holidayRepository.searchHolidays(holidayYear, countryCode, from, to, type, pageable);
     }
 
     private void initializeCountries() {
@@ -70,15 +68,15 @@ public class HolidayService {
                 .toList();
 
 
-        for(int holidayYear = START_YEAR; holidayYear <= END_YEAR; holidayYear++) {
-            for(Country c : initialCountries) {
-                    getHolidayByCountryAndHolidayYear(c.getCountryCode(), holidayYear);
+        for (int holidayYear = START_YEAR; holidayYear <= END_YEAR; holidayYear++) {
+            for (Country c : initialCountries) {
+                getHolidayByCountryAndHolidayYear(c.getCountryCode(), holidayYear);
             }
         }
     }
 
     public void getHolidayByCountryAndHolidayYear(String countryCode, int holidayYear) {
-        if(holidayRepository.existsByCountryCodeAndHolidayYear(countryCode, holidayYear)) {
+        if (holidayRepository.existsByCountryCodeAndHolidayYear(countryCode, holidayYear)) {
             return;
         }
 
