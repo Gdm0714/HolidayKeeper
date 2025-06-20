@@ -4,18 +4,21 @@ import com.min.holidaykeeper.entity.Holiday;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface HolidayRepository extends JpaRepository<Holiday, Long> {
     
+
     @Query("SELECT h FROM Holiday h WHERE " +
-           "(:year IS NULL OR h.holidayYear = :holidayYear) AND " +
+           "(:holidayYear IS NULL OR h.holidayYear = :holidayYear) AND " +
            "(:countryCode IS NULL OR h.countryCode = :countryCode) AND " +
-           "(:fromDate IS NULL OR h.date >= :from) AND " +
-           "(:toDate IS NULL OR h.date <= :to) AND " +
+           "(:from IS NULL OR h.date >= :from) AND " +
+           "(:to IS NULL OR h.date <= :to) AND " +
            "(:type IS NULL OR :type MEMBER OF h.types)")
     Page<Holiday> searchHolidays(@Param("holidayYear") Integer holidayYear,
                                 @Param("countryCode") String countryCode,
@@ -24,6 +27,9 @@ public interface HolidayRepository extends JpaRepository<Holiday, Long> {
                                 @Param("type") String type,
                                 Pageable pageable);
     
+    @Modifying
+    @Query("DELETE FROM Holiday h WHERE h.countryCode = :countryCode AND h.holidayYear = :holidayYear")
+    void deleteByCountryCodeAndYear(@Param("countryCode") String countryCode, @Param("holidayYear") int holidayYear);
 
     boolean existsByCountryCodeAndHolidayYear(String countryCode, int year);
 }
