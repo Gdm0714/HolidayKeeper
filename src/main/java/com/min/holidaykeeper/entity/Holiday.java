@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(indexes = {@Index(name = "idx_holidays_year_country", columnList = "year, country_code")})
+@Table(name = "holiday", indexes = {@Index(name = "idx_holidays_year_country", columnList = "holiday_year, country_code")})
 @Getter
 @Builder
 @NoArgsConstructor
@@ -30,6 +30,7 @@ public class Holiday {
     private String name;
 
     @NotNull
+    @Column(name = "country_code")
     private String countryCode;
 
     @NotNull
@@ -47,7 +48,8 @@ public class Holiday {
     @Column(name = "type")
     private Set<String> types = new HashSet<>();
 
-    private int year;
+    private int holidayYear;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_code", insertable = false, updatable = false)
