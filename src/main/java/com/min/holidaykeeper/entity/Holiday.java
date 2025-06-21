@@ -46,6 +46,7 @@ public class Holiday {
     @ElementCollection
     @CollectionTable(name = "holiday_types", joinColumns = @JoinColumn(name = "holiday_id"))
     @Column(name = "type")
+    @Builder.Default
     private Set<String> types = new HashSet<>();
 
     private int holidayYear;
