@@ -59,6 +59,24 @@ public class HolidayService {
         holidayRepository.saveAll(holidayList);
     }
 
+    // 4. 삭제
+    public void deleteHolidaysByCountryAndYear(String countryCode, int year) {
+        holidayRepository.deleteByCountryCodeAndYear(countryCode, year);
+    }
+
+    private void initializeCountries() {
+        List<CountryDto> countries = nagerApiService.getCountries();
+
+        List<Country> countryList = countries.stream()
+                .map(dto -> Country.builder()
+                        .countryCode(dto.getCountryCode())
+                        .name(dto.getName())
+                        .build())
+                .toList();
+
+        countryRepository.saveAll(countryList);
+    }
+
     private void getHolidaysByHolidayYear() {
         List<Country> countries = countryRepository.findAll();
 
