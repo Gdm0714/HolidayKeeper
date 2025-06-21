@@ -3,6 +3,7 @@ package com.min.holidaykeeper.service;
 import com.min.holidaykeeper.api.NagerApiService;
 import com.min.holidaykeeper.dto.CountryDto;
 import com.min.holidaykeeper.dto.HolidayDto;
+import com.min.holidaykeeper.dto.request.HolidayRequest;
 import com.min.holidaykeeper.entity.Country;
 import com.min.holidaykeeper.entity.Holiday;
 import com.min.holidaykeeper.repository.CountryRepository;
@@ -45,7 +46,14 @@ public class HolidayService {
     public Page<Holiday> searchHolidays(Integer holidayYear, String countryCode,
                                         LocalDate from, LocalDate to,
                                         String type, Pageable pageable) {
-        return holidayRepository.searchHolidays(holidayYear, countryCode, from, to, type, pageable);
+        HolidayRequest request = new HolidayRequest();
+        request.setHolidayYear(holidayYear);
+        request.setCountryCode(countryCode);
+        request.setFrom(from);
+        request.setTo(to);
+        request.setType(type);
+        
+        return holidayRepository.searchHolidays(request, pageable);
     }
 
     // 3. 재동기화(Refresh)
