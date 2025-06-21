@@ -46,4 +46,15 @@ public class HolidayController {
 
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{countryCode}/{year}")
+    @Operation(summary = "4. 삭제 - 특정 연도, 국가의 공휴일 레코드 전체 삭제")
+    public ResponseEntity<Void> deleteHolidays(
+            @Parameter(description = "국가 코드", example = "KR") @PathVariable String countryCode,
+            @Parameter(description = "연도", example = "2025") @PathVariable int year) {
+
+        holidayService.deleteHolidaysByCountryAndYear(countryCode, year);
+
+        return ResponseEntity.ok().build();
+    }
 }
