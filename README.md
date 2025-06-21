@@ -153,10 +153,12 @@ cd holiday-keeper
 ```
 
 ### 테스트 결과
-![img.png](img.png)
+![Uploading img.png…]()
+
 
 ## 💾 데이터베이스 구조
-![img_1.png](img_1.png)
+![img_1](https://github.com/user-attachments/assets/5a750b60-9adf-4b51-a17e-24a973d5a836)
+
 
 #### Countries 테이블
 | 컬럼명 | 타입 | 제약조건 | 설명 |
