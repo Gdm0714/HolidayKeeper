@@ -85,7 +85,7 @@ class HolidayServiceTest {
         
         Page<Holiday> holidayPage = new PageImpl<>(List.of(holiday));
         
-        when(holidayRepository.searchHolidays(any(), any(), any(), any(), any(), any()))
+        when(holidayRepository.searchHolidays(any(), any()))
                 .thenReturn(holidayPage);
         
         Page<Holiday> result = holidayService.searchHolidays(2025, "KR", null, null, null, pageable);
