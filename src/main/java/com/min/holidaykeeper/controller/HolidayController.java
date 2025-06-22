@@ -38,23 +38,23 @@ public class HolidayController {
 
     @PostMapping("/refresh/{countryCode}/{year}")
     @Operation(summary = "3. 재동기화(Refresh) - 특정 연도, 국가 데이터를 재호출하여 Upsert")
-    public ResponseEntity<Void> refreshHolidays(
+    public ResponseEntity<String> refreshHolidays(
             @Parameter(description = "국가 코드", example = "KR") @PathVariable String countryCode,
             @Parameter(description = "연도", example = "2025") @PathVariable int year) {
 
         holidayService.refreshHolidaysByCountryAndYear(countryCode, year);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(String.format("%s %d년 공휴일 데이터를 재동기화했습니다.", countryCode, year));
     }
 
     @DeleteMapping("/{countryCode}/{year}")
     @Operation(summary = "4. 삭제 - 특정 연도, 국가의 공휴일 레코드 전체 삭제")
-    public ResponseEntity<Void> deleteHolidays(
+    public ResponseEntity<String> deleteHolidays(
             @Parameter(description = "국가 코드", example = "KR") @PathVariable String countryCode,
             @Parameter(description = "연도", example = "2025") @PathVariable int year) {
 
         holidayService.deleteHolidaysByCountryAndYear(countryCode, year);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(String.format("%s %d년 공휴일 데이터를 삭제했습니다.", countryCode, year));
     }
 }
