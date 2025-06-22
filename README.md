@@ -154,7 +154,8 @@ cd holiday-keeper
 ```
 
 ### 테스트 결과
-![img](https://github.com/user-attachments/assets/374cd795-d4fc-43da-9530-b658c98dd8ed)
+<img width="1848" alt="image" src="https://github.com/user-attachments/assets/213b7f54-7e71-4340-9e93-b26bf16c971e" />
+
 
 ## 💾 데이터베이스 구조
 ![img_1](https://github.com/user-attachments/assets/5a750b60-9adf-4b51-a17e-24a973d5a836)
