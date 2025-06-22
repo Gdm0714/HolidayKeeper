@@ -6,10 +6,13 @@ import com.min.holidaykeeper.dto.HolidayDto;
 import com.min.holidaykeeper.dto.request.HolidayRequest;
 import com.min.holidaykeeper.entity.Country;
 import com.min.holidaykeeper.entity.Holiday;
+import com.min.holidaykeeper.exception.BusinessException;
+import com.min.holidaykeeper.exception.HolidayErrorCode;
 import com.min.holidaykeeper.repository.CountryRepository;
 import com.min.holidaykeeper.repository.HolidayRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,8 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletableFuture;;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -65,11 +69,20 @@ public class HolidayService {
                 .map(dto -> dtoToEntity(dto, holidayYear))
                 .toList();
         holidayRepository.saveAll(holidayList);
+
+        log.info("{} {}년 공휴일 데이터를 재동기화 했습니다.", countryCode, holidayYear);
     }
 
     // 4. 삭제
     public void deleteHolidaysByCountryAndYear(String countryCode, int year) {
-        holidayRepository.deleteByCountryCodeAndYear(countryCode, year);
+
+        int deletedCount = holidayRepository.deleteByCountryCodeAndYear(countryCode, year);
+        if (deletedCount == 0) {
+            throw new BusinessException(HolidayErrorCode.HOLIDAY_NOT_FOUND,
+                    String.format("%s %d년 공휴일 데이터가 존재하지 않습니다.", countryCode, year));
+        }
+
+        log.info("{} {}년 공휴일 데이터를 삭제 했습니다.", countryCode, year);
     }
 
     private void initializeCountries() {

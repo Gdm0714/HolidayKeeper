@@ -11,7 +11,7 @@ public interface HolidayRepository extends JpaRepository<Holiday, Long>, Holiday
     
     @Modifying
     @Query("DELETE FROM Holiday h WHERE h.countryCode = :countryCode AND h.holidayYear = :holidayYear")
-    void deleteByCountryCodeAndYear(@Param("countryCode") String countryCode, @Param("holidayYear") int holidayYear);
+    int deleteByCountryCodeAndYear(@Param("countryCode") String countryCode, @Param("holidayYear") int holidayYear);
 
     boolean existsByCountryCodeAndHolidayYear(String countryCode, int year);
 }
